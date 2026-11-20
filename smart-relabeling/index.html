@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="An interactive case study of Smart Relabeling: a local dataset labeling and model-training workflow designed and built by Jukree Donkittikun.">
+  <title>Smart Relabeling — Jukree Donkittikun</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="samples.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to interactive demo</a>
+  <header class="site-header wrap">
+    <a class="wordmark" href="#"><span class="brand-icon" aria-hidden="true">j.</span> Jukree Donkittikun <span class="muted">/ Selected work</span></a>
+    <nav aria-label="Page navigation"><a href="#workspace">Try the workflow <span aria-hidden="true">↗</span></a><a href="#case-study">Behind the project</a></nav>
+  </header>
+  <main>
+    <section class="hero wrap" aria-labelledby="title">
+      <div>
+        <p class="eyebrow"><span class="dot"></span> PROJECT 01 <span class="eyebrow-sep">/</span> MACHINE LEARNING TOOLS</p>
+        <h1 id="title">Less labeling.<br><span>More learning.</span></h1>
+        <p class="hero-copy">Smart Relabeling turns repetitive annotation into a loop of suggestions, human corrections, and better training data.</p>
+        <div class="hero-actions"><a class="button primary" href="#workspace">Explore the workflow <span aria-hidden="true">↓</span></a><span class="hero-meta">DESIGNED & BUILT BY JUKREE<br>Python · Tkinter · YOLO · PyTorch</span></div>
+      </div>
+      <aside class="impact" aria-label="Reported project impact">
+        <span class="small-cap">FROM THE REAL PROJECT</span>
+        <div class="impact-number">8,000<span>images labeled</span></div>
+        <div class="impact-footer"><strong>in under 2 days</strong><span>Reported by the team using the application.<br>Not a benchmark of this HTML demo.</span></div>
+        <svg class="impact-decor" viewBox="0 0 110 110" aria-hidden="true"><path d="M10 35V10h25M75 10h25v25M100 75v25H75M35 100H10V75"/><path d="m30 58 16 16 35-38"/></svg>
+      </aside>
+    </section>
+
+    <section class="wrap demo-section" id="workspace" aria-labelledby="demo-heading">
+      <div class="section-top"><div><p class="eyebrow">A WORKFLOW YOU CAN TRY</p><h2 id="demo-heading">From images to a reviewed dataset.</h2></div><span class="draft-label">LOCAL PORTFOLIO DRAFT</span></div>
+      <div class="demo-notice"><span class="notice-icon" aria-hidden="true">i</span><p><strong>Interactive recreation.</strong> Box editing and exports work in your browser. AI suggestions, relabeling, and training use illustrative sample data; no model runs here.</p></div>
+      <div class="app-shell">
+        <div class="app-top"><div class="app-brand"><span class="app-logo" aria-hidden="true">⌗</span><strong>Smart Relabeling</strong><span class="app-version">WORKFLOW EXPLORER</span></div><button class="text-button" id="reset">Reset demo ↺</button></div>
+        <div class="app-body">
+          <aside class="workflow-nav" aria-label="Workflow stages">
+            <span class="nav-caption">THE WORKFLOW</span>
+            <div role="tablist" aria-label="Workflow" aria-orientation="vertical" id="stage-tabs">
+              <button role="tab" id="tab-prepare" aria-controls="panel-prepare" aria-selected="true" data-stage="prepare"><span class="step-num">01</span><span>Dataset selection<small>Choose a sample dataset</small></span></button>
+              <button role="tab" id="tab-review" aria-controls="panel-review" aria-selected="false" tabindex="-1" data-stage="review"><span class="step-num">02</span><span>Label & review<small>Edit and auto-label here</small></span></button>
+              <button role="tab" id="tab-build" aria-controls="panel-build" aria-selected="false" tabindex="-1" data-stage="build"><span class="step-num">03</span><span>Model building<small>Preview the training flow</small></span></button>
+            </div>
+            <div class="local-card"><span aria-hidden="true">◈</span><strong>Local by design</strong><p>The desktop application keeps private customer datasets on the team's own hardware.</p></div>
+          </aside>
+          <div class="app-content">
+            <section role="tabpanel" id="panel-prepare" aria-labelledby="tab-prepare">
+              <div class="panel-title"><div><p class="eyebrow">01 / DATASET SELECTION</p><h3>Choose what you want to label.</h3></div><span class="pill">30 synthetic images</span></div>
+              <p class="panel-lead">Pick bottles, cars, or spare parts. Each dataset contains 10 different illustrations and starts without labels. Your edits stay with each dataset while this page is open.</p>
+              <div class="dataset-picker" id="dataset-picker" role="group" aria-label="Sample datasets"></div>
+              <div class="dataset-overview"><strong id="selected-dataset-title">Bottles</strong><span id="dataset-description"></span></div>
+              <div class="setup-grid"><div><div class="sample-grid" id="sample-grid"></div><div class="upload-row"><label class="button secondary" for="image-input">＋ Add your own images</label><input id="image-input" type="file" accept="image/jpeg,image/png,image/webp" multiple><span>Optional · JPG, PNG, WebP · up to 8 MB each</span></div><p class="fine-print">Your images stay in this page's memory. Add boxes manually; example AI suggestions are available only for the built-in samples.</p></div>
+              <aside class="dataset-config"><span class="small-cap">DATASET SETTINGS</span><label for="dataset-name">Dataset name</label><input id="dataset-name" maxlength="60" value="bottles-study"><label for="class-name">Object class</label><input id="class-name" maxlength="30" value="bottle"><p id="class-context">One class per demo dataset. The desktop tool supports multiple classes and COCO class mapping.</p><div class="config-summary"><span id="image-total">10 images</span><span>Class ID <strong>0</strong></span></div><button class="button primary full" id="start-review">Open labeling workspace <span aria-hidden="true">→</span></button></aside></div>
+              <details class="context-note"><summary>How data enters the real application</summary><p>Start a new dataset or reopen an existing one. Import an image folder or extract a selected range of video frames. Map supported COCO classes for initial YOLO suggestions, or create custom classes for manual labeling. A diverse-image picker helps choose examples to review first.</p></details>
+            </section>
+
+            <section role="tabpanel" id="panel-review" aria-labelledby="tab-review" hidden>
+              <div class="panel-title"><div><p class="eyebrow">02 / LABEL & REVIEW</p><h3>Label, review, and auto-label in one place.</h3></div><span class="pill" id="verified-count">0 / 10 reviewed</span></div>
+              <div class="auto-label-bar"><div><strong id="review-dataset-name">Bottles</strong><p id="relabel-requirement">Run auto-labeling to get example suggestions, then correct them here.</p></div><button class="button primary" id="run-relabel">Auto-label dataset ↻</button></div>
+              <div class="editor-toolbar"><div class="segmented" aria-label="Editor tool"><button id="tool-select" aria-pressed="true">↖ Select / move</button><button id="tool-draw" aria-pressed="false">＋ Draw a box</button></div><button class="text-button" id="clear-selection">Deselect</button><span class="toolbar-spacer"></span><span class="small-cap">EXAMPLE PREDICTIONS</span></div>
+              <div class="editor-layout"><div class="image-column"><div class="canvas-wrap"><svg id="annotation-canvas" viewBox="0 0 800 480" role="img" tabindex="0" aria-describedby="editor-help" aria-label="Dataset image with editable annotation boxes"><title>Shelf annotation workspace</title></svg><div class="canvas-caption"><span id="image-caption">bottles_01.svg</span><span id="review-status">Needs review</span></div></div><div class="filmstrip" id="filmstrip" aria-label="Dataset images"></div><p class="editor-help" id="editor-help">Select a box to move it. Draw around a missed object, or use “Add centered box” for keyboard editing.</p></div>
+              <aside class="inspector"><div class="inspector-heading"><span class="small-cap">ANNOTATIONS</span><span class="count-badge" id="box-count">0</span></div><label class="range-label" for="confidence">Suggestion confidence <output id="confidence-value">35%</output></label><input id="confidence" type="range" min="5" max="95" value="35" step="5"><p class="fine-print">Filters example suggestions. Human edits stay visible; hidden boxes remain in the export.</p><div id="annotation-list" class="annotation-list" aria-label="Boxes in the current image"></div><div id="box-fields" hidden><span class="small-cap">SELECTED BOX · % OF IMAGE</span><div class="box-inputs"><label>X<input id="box-x" type="number" min="0" max="99" step="0.5"></label><label>Y<input id="box-y" type="number" min="0" max="99" step="0.5"></label><label>Width<input id="box-w" type="number" min="1" max="100" step="0.5"></label><label>Height<input id="box-h" type="number" min="1" max="100" step="0.5"></label></div><button id="delete-box" class="text-button danger">Delete selected box</button></div><button class="button secondary full" id="add-box">＋ Add centered box</button><button class="button primary full" id="verify-image">Mark reviewed ✓</button><p class="fine-print">Reviewed or edited images are protected during smart relabeling.</p></aside></div>
+              <div class="auto-label-summary"><span><strong id="protected-count">0</strong> protected images</span><span><strong id="eligible-count">10</strong> available for auto-labeling</span><span><strong id="round-count">0</strong> demo rounds</span><span class="pill amber">Simulated AI</span></div>
+              <div class="inline-run-log" id="relabel-log" role="status" aria-live="polite">No auto-labeling run yet. Start with suggestions or label objects manually.</div>
+              <details class="context-note"><summary>How the review and auto-labeling loop works</summary><p>Bottles and cars illustrate initial suggestions from a pretrained COCO class. Spare parts represent a custom class: label an example first. After human edits, the original app can fine-tune and update only unedited images. Reviewed and edited images are protected. Repeated runs can reuse a previous fine-tuned model if the human labels have not changed. All AI results here are scripted illustrations, not real inference.</p></details>
+              <div class="panel-footer"><button class="text-button" id="export-labels">↓ Export annotation JSON</button><button class="button secondary" data-go="build">Continue to model building →</button></div>
+            </section>
+
+            <section role="tabpanel" id="panel-build" aria-labelledby="tab-build" hidden>
+              <div class="panel-title"><div><p class="eyebrow">03 / MODEL BUILDING</p><h3>From reviewed labels to a model run.</h3></div><span class="pill amber">Training simulation</span></div>
+              <p class="panel-lead">The real application augments the dataset, trains a YOLO model, and records a versioned result. This accelerated walkthrough creates a run summary, not model weights.</p>
+              <div class="build-layout"><div class="build-settings"><span class="small-cap">RUN CONFIGURATION</span><label for="epochs">Epochs to illustrate</label><select id="epochs"><option value="20">20 epochs</option><option value="40">40 epochs</option><option value="80" selected>80 epochs · desktop default</option></select><div class="build-summary" id="build-summary"></div><button class="button primary full" id="build-model">Preview model build →</button><button class="text-button full" id="cancel-build" hidden>Cancel preview</button><p class="fine-print" id="build-requirement">Review at least one image before starting.</p></div><div class="training-view"><div class="training-head"><span class="small-cap">ILLUSTRATIVE TRAINING RUN</span><span id="training-state">Ready when you are</span></div><div class="progress-track" role="progressbar" aria-label="Simulated training progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="training-progress"><div id="training-bar"></div></div><svg id="training-chart" viewBox="0 0 560 210" role="img" aria-label="Illustrative loss curve; no real training measurements"><path class="grid-lines" d="M35 25H540M35 75H540M35 125H540M35 175H540M35 25V175"/><text x="35" y="203">START</text><text x="452" y="203">FINAL EPOCH</text><path id="loss-line" d=""/></svg><p class="chart-caption">Example loss trend · not measured model performance</p><div id="training-log" class="training-log" role="status" aria-live="polite">Run a preview to see augmentation, training, and model registration.</div><button class="button secondary" id="download-run" hidden>↓ Download demo run summary</button></div></div>
+            </section>
+            <p id="app-status" class="app-status" role="status" aria-live="polite">Ready. Explore the sample dataset or add your own images.</p>
+          </div>
+        </div>
+      </div>
+      <p class="demo-caption"><span>Original desktop workflow, reinterpreted for the browser.</span><span>New HTML / CSS / JavaScript · no application source or customer images included.</span></p>
+    </section>
+
+    <section class="case-study wrap" id="case-study" aria-labelledby="story-title"><div class="story-intro"><p class="eyebrow">BEHIND THE PROJECT / MAR–MAY 2026</p><h2 id="story-title">Built around the work.<br>And the people doing it.</h2><p>An internal tool at Baksters Co., Ltd., created to help staff prepare detection datasets and customer demo models with less repetitive labeling.</p></div><div class="story-columns"><article><span class="story-number">01 / THE PROBLEM</span><h3>Labeling was the bottleneck.</h3><p>Preparing object-detection datasets took substantial manual effort. Customer data could also be private, making a local desktop workflow important.</p></article><article><span class="story-number">02 / MY CONTRIBUTION</span><h3>One owner, end to end.</h3><p>I initiated the tool and independently designed and built the UI, architecture, and application logic, then refined the workflow to make it easier for colleagues to use.</p></article><article><span class="story-number">03 / THE OUTCOME</span><h3>More time for the model.</h3><p>The team reported labeling <strong>8,000 images in under two days</strong>, supporting faster model preparation. This is a team-reported outcome, without a controlled before/after time benchmark.</p></article></div>
+      <div class="architecture"><div><p class="eyebrow">ARCHITECTURE / ORIGINAL APPLICATION</p><h3>A local pipeline with a human checkpoint.</h3><p>The interface coordinates services through an event bus. Dataset, configuration, and model repositories keep storage concerns separate from labeling and training.</p></div><div class="architecture-flow"><span>Python / Tkinter UI</span><i aria-hidden="true">↓</i><span>Event bus + workflow services</span><i aria-hidden="true">↓</i><div><span>Frame extraction</span><span>YOLO suggestions</span><span>Human review</span><span>Fine-tune & relabel</span><span>Augment & train</span></div><i aria-hidden="true">↓</i><span>Local datasets · configuration · versioned models</span></div></div>
+      <details class="scope-details"><summary>What this showcase demonstrates—and what remains in the desktop application</summary><div class="scope-grid"><div><h4>Working in this browser</h4><p>Sample selection, local image preview, annotation creation and movement, numeric box editing, confidence filtering, review protection, JSON export, and simulated training controls.</p></div><div><h4>Illustrated, not executed</h4><p>YOLO inference, video frame extraction, diverse-image selection, image augmentation, fine-tuning, mAP evaluation, and trained-model export. The original application supports these workflow stages; this showcase contains no ML weights or backend.</p></div></div></details>
+    </section>
+  </main>
+  <footer class="wrap site-footer"><span>Jukree Donkittikun <span class="muted">/ Software & AI Engineering</span></span><span>Portfolio draft · prepared for local review</span><a href="#">Back to top ↑</a></footer>
+</body>
+</html>

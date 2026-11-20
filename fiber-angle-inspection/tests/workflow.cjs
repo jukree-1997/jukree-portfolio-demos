@@ -1,0 +1,103 @@
+const assert=require('node:assert/strict');
+const path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const {JSDOM,VirtualConsole}=require('jsdom');
+
+(async()=>{
+  const errors=[],downloads=[],blobs=new Map();let nextURL=0,prints=0;
+  const consoleBridge=new VirtualConsole();
+  consoleBridge.on('jsdomError',e=>{if(!e.message.includes('Could not parse CSS'))errors.push(e.message);});
+  const file=path.join(__dirname,'..','index.html');
+  const dom=await JSDOM.fromFile(file,{url:pathToFileURL(file).href,runScripts:'dangerously',resources:'usable',pretendToBeVisual:true,virtualConsole:consoleBridge,beforeParse(w){
+    w.URL.createObjectURL=b=>{const key='blob:test-'+(++nextURL);blobs.set(key,b);return key;};
+    w.URL.revokeObjectURL=key=>blobs.delete(key);
+    w.HTMLAnchorElement.prototype.click=function(){downloads.push({filename:this.download,blob:blobs.get(this.href)});};
+    w.print=()=>prints++;
+  }});
+  try{
+    await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
+    const w=dom.window,d=w.document,$=id=>d.getElementById(id),click=id=>$(id).click();
+    const input=(id,value,type='input')=>{$(id).value=value;$(id).dispatchEvent(new w.Event(type,{bubbles:true}));};
+    const check=()=>{$('confirm-review').checked=true;$('confirm-review').dispatchEvent(new w.Event('change'));};
+    const text=blob=>new Promise((resolve,reject)=>{const r=new w.FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsText(blob);});
+    const json=async()=>{click('export-json');return JSON.parse(await text(downloads.at(-1).blob));};
+    const geo=w.FiberDemoGeometry;
+    assert.equal(d.querySelectorAll('[role=tab]').length,3);
+    click('tab-real');assert.equal($('panel-real').hidden,false);
+    assert.match($('app-mode-badge').textContent,/V7 camera results/);
+    assert.equal(w.FiberRealEvidence.frameCount,1);
+    assert.equal(w.FiberRealEvidence.slotCount,5);
+    for(const id of ['real-thumbnails','real-image-select','real-search','real-filter','real-prev','real-next'])assert.equal(d.getElementById(id),null);
+    assert.equal($('real-results-body').children.length,5);
+    assert.equal($('history-count').textContent,'0');
+    click('real-export');
+    const v7=JSON.parse(await text(downloads.at(-1).blob));
+    assert.equal(v7.profile,'black-fixture-final-cascade-live-v7');
+    assert.equal(v7.storedEvaluationResults,true);
+    assert.equal(v7.liveInference,false);
+    assert.equal(v7.applicationRuntimeIntegrated,true);
+    assert.equal(v7.metrologyValidated,false);
+    assert.equal(v7.frame.name,'physical-1920-r1');
+    assert.equal(v7.frame.slots.length,5);
+    assert.ok(v7.frame.slots.every(slot=>slot.profile===v7.profile));
+    assert.match($('real-image').getAttribute('src'),/results\/physical-1920-r1\.png$/);
+    assert.equal($('real-results-body').children[0].children[1].textContent,'135.26°');
+    click('real-show-raw');assert.match($('real-image').getAttribute('src'),/raw\/physical-1920-r1\.png$/);
+    assert.equal($('real-show-raw').getAttribute('aria-pressed'),'true');
+    assert.match($('real-open-image').getAttribute('href'),/raw\/physical-1920-r1\.png$/);
+    click('real-show-result');assert.match($('real-image').getAttribute('src'),/results\/physical-1920-r1\.png$/);
+    click('real-show-raw');click('reset');
+    assert.match($('real-image').getAttribute('src'),/results\/physical-1920-r1\.png$/);
+    assert.equal($('panel-inspection').hidden,false);
+    console.log('PASS Single V7 example: matching profile/angles, raw/result toggle, full-resolution links, exports, reset and separation from synthetic history; obsolete navigation removed.');
+    for(const angle of [0,40,90,102.4,170,180])assert.ok(Math.abs(geo.openingAngle(geo.points(angle,0))-angle)<1e-6);
+    assert.equal(geo.openingAngle({vertex:{x:0,y:0},a:{x:0,y:0},b:{x:1,y:0}}),null);
+    assert.equal(geo.openingAngle({vertex:{x:0,y:0},a:{x:NaN,y:1},b:{x:1,y:0}}),null);
+    const boundaries=geo.measure([95,115,94.9,115.1,NaN],{min:95,max:115});
+    assert.equal(boundaries[0].inRange,true);assert.equal(boundaries[1].inRange,true);assert.equal(boundaries[2].inRange,false);assert.equal(boundaries[3].inRange,false);assert.equal(boundaries[4].angle,null);
+    console.log('PASS Angle math, degenerate geometry, inclusive tolerance boundaries and invalid geometry.');
+
+    assert.equal($('inspect').disabled,true);assert.equal($('save-batch').disabled,true);
+    click('load-job');assert.equal($('inspect').disabled,false);assert.match($('job-description').textContent,/Textile sample A/);
+    click('inspect');assert.match($('result-count').textContent,/5 measured/);
+    assert.equal($('piece-results').querySelectorAll('.warning').length,1);
+    assert.equal($('save-batch').disabled,true);
+    check();assert.equal($('save-batch').disabled,false);
+    input('reference','');assert.equal($('inspect').disabled,true);assert.equal($('save-batch').disabled,true);
+    input('reference','105');click('inspect');check();
+    input('operator-note','A fictional batch');click('save-batch');
+    assert.equal($('panel-reports').hidden,false);assert.equal($('history-count').textContent,'1');
+    const first=await json();assert.equal(first.batch.id,'DEMO-B001');assert.equal(first.batch.rows.length,5);assert.equal(first.batch.simulation,true);assert.equal(first.batch.calibrated,false);
+    click('save-batch');assert.equal($('history-count').textContent,'1');
+    console.log('PASS Job loading, invalid context, operator confirmation, save guards and immutable snapshot export.');
+
+    click('correct-batch');assert.equal($('correction-banner').hidden,false);assert.equal($('panel-inspection').hidden,false);
+    input('synthetic-angle','110');click('inspect');check();assert.equal($('save-batch').disabled,true);
+    input('operator-note','=SUM(1,2)');assert.equal($('save-batch').disabled,false);click('save-batch');
+    const corrected=await json();assert.equal(corrected.batch.id,'DEMO-B002');assert.equal(corrected.batch.correctionOf,'DEMO-B001');assert.equal(corrected.batch.rows[0].angle,110);
+    d.querySelector('[data-batch="DEMO-B001"]').click();assert.deepEqual(await json(),first);
+    d.querySelector('[data-batch="DEMO-B002"]').click();click('export-csv');const csv=await text(downloads.at(-1).blob);
+    assert.ok(csv.includes("'=SUM(1,2)"));assert.ok(csv.includes('Simulation'));assert.ok(csv.includes('Calibrated'));
+    input('report-language','zh','change');assert.match($('report-sheet').textContent,/纤维检测报告/);click('print-report');assert.equal(prints,1);
+    console.log('PASS Corrections append a linked batch; original snapshots remain unchanged; CSV formula protection, Chinese labels and print invocation.');
+
+    click('new-inspection');input('sample-select','mixed','change');click('inspect');check();click('save-batch');
+    const mixed=(await json()).batch;
+    assert.equal(mixed.rows.filter(r=>r.angle!==null).length,3);assert.equal(mixed.rows[3].angle,null);assert.equal(mixed.rows[3].state,'empty');assert.equal(mixed.rows[4].angle,null);assert.equal(mixed.rows[4].state,'unresolved');
+    click('new-inspection');input('sample-select','unavailable','change');click('inspect');assert.equal($('save-batch').disabled,true);assert.equal($('confirm-review').disabled,true);
+    assert.match($('overall-summary').textContent,/Mean of measured angles: —/);click('save-batch');assert.equal($('history-count').textContent,'3');
+    console.log('PASS Mixed results keep null angles; unavailable-only samples have no mean and cannot be saved.');
+
+    input('sample-select','standard','change');click('inspect');check();input('job-select','DEMO-202','change');assert.equal($('save-batch').disabled,true);assert.equal($('inspect').disabled,true);
+    click('load-job');click('inspect');check();input('lot','<img src=x onerror=alert(1)>');assert.equal($('save-batch').disabled,true);
+    click('inspect');check();input('operator-note','<script>alert(1)</script>');click('save-batch');
+    assert.equal($('report-sheet').querySelector('img'),null);assert.equal($('report-sheet').querySelector('script'),null);assert.match($('report-sheet').textContent,/<script>/);
+    input('history-filter','DEMO-203','change');assert.equal($('export-json').disabled,true);assert.match($('report-sheet').textContent,/Choose another/);
+    input('history-filter','all','change');assert.equal($('export-json').disabled,false);
+    click('tab-inspection');$('tab-inspection').focus();$('tab-inspection').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(d.activeElement.id,'tab-reports');$('tab-reports').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(d.activeElement.id,'tab-real');$('tab-real').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Home',bubbles:true}));assert.equal(d.activeElement.id,'tab-inspection');$('tab-inspection').dispatchEvent(new w.KeyboardEvent('keydown',{key:'End',bubbles:true}));assert.equal(d.activeElement.id,'tab-real');
+    click('reset');assert.equal($('history-count').textContent,'0');assert.equal($('panel-inspection').hidden,false);assert.equal($('save-batch').disabled,true);
+    assert.deepEqual(errors,[]);
+    console.log('PASS Job/sample/context changes invalidate stale measurements; report escaping, empty filters, keyboard tabs and reset.');
+    console.log('LIMIT No rendered-layout or real browser PDF verification in jsdom. PDF printing is mocked.');
+  }finally{dom.window.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

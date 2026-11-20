@@ -1,0 +1,80 @@
+'use strict';
+window.FiberRealEvidence = {
+  "publication": "resolution-bundle-foundation-20260827/run-two-mode-20260827-v2",
+  "profile": "black-fixture-final-cascade-live-v7",
+  "frameCount": 1,
+  "slotCount": 5,
+  "storedEvaluationResults": true,
+  "liveInference": false,
+  "applicationRuntimeIntegrated": true,
+  "metrologyValidated": false,
+  "accuracyClaimed": false,
+  "productionValidated": false,
+  "sourceManifestSHA256": "9fa299d066a03d91d09967751e98667e6f810b7318cffdf672ff3089046a3c41",
+  "frames": [
+    {
+      "name": "physical-1920-r1",
+      "label": "1920 × 1080 · capture 1",
+      "width": 1920,
+      "height": 1080,
+      "repeat": 1,
+      "raw": "assets/real/raw/physical-1920-r1.png",
+      "result": "assets/real/results/physical-1920-r1.png",
+      "rawSHA256": "dcfa5ae492a2ea9c40ad6c3835852a43f752fc41633140989c49457dabed9a22",
+      "resultSHA256": "23c77c4348cb3f14196efa0eb8d45cc147e2704e559a2759ae6ab7917d896d12",
+      "sourceRecordSHA256": "38c2cdb06934f96154118497ef19105929bea16251f6182e0fa76fcbe9ba0ce1",
+      "slots": [
+        {
+          "slot": "S01",
+          "status": "MEASURED",
+          "angle": 135.25802659159424,
+          "angleSourceText": "135.25802659159424",
+          "method": "adapted_border",
+          "stage": "preserved_primary",
+          "reason": "measured",
+          "profile": "black-fixture-final-cascade-live-v7"
+        },
+        {
+          "slot": "S02",
+          "status": "MEASURED",
+          "angle": 141.37818635,
+          "angleSourceText": "141.37818635",
+          "method": "02_frangi_path_offline08_geometry",
+          "stage": "overlay_fallback",
+          "reason": "measured",
+          "profile": "black-fixture-final-cascade-live-v7"
+        },
+        {
+          "slot": "S03",
+          "status": "MEASURED",
+          "angle": 145.64638280454477,
+          "angleSourceText": "145.64638280454477",
+          "method": "adapted_border",
+          "stage": "preserved_primary",
+          "reason": "measured",
+          "profile": "black-fixture-final-cascade-live-v7"
+        },
+        {
+          "slot": "S04",
+          "status": "MEASURED",
+          "angle": 133.80846175308574,
+          "angleSourceText": "133.80846175308574",
+          "method": "adapted_border",
+          "stage": "preserved_primary",
+          "reason": "measured",
+          "profile": "black-fixture-final-cascade-live-v7"
+        },
+        {
+          "slot": "S05",
+          "status": "MEASURED",
+          "angle": 180.0,
+          "angleSourceText": "180.0",
+          "method": "adapted_border",
+          "stage": "preserved_primary",
+          "reason": "measured",
+          "profile": "black-fixture-final-cascade-live-v7"
+        }
+      ]
+    }
+  ]
+};

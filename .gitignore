@@ -1,0 +1,5 @@
+# Local planning and provenance checks are kept in the working copy only.
+**/tasks/
+**/tools/
+**/VERIFICATION.txt
+.DS_Store
